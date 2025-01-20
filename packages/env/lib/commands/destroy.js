@@ -27,7 +27,12 @@ const { executeLifecycleScript } = require( '../execute-lifecycle-script' );
  * @param {boolean} options.debug             True if debug mode is enabled.
  * @param {boolean} options.skip-confirmation Indicates whether or not to skip the confirmation prompt.
  */
-module.exports = async function destroy( { spinner, scripts, debug, 'skip-confirmation': skipConfirmation } ) {
+module.exports = async function destroy( {
+	spinner,
+	scripts,
+	debug,
+	'skip-confirmation': skipConfirmation,
+} ) {
 	const config = await loadConfig( path.resolve( '.' ) );
 
 	try {
@@ -42,7 +47,7 @@ module.exports = async function destroy( { spinner, scripts, debug, 'skip-confir
 	);
 
 	let yesDelete = skipConfirmation;
-	if (!yesDelete) {
+	if ( ! yesDelete ) {
 		try {
 			yesDelete = await confirm( {
 				message: 'Are you sure you want to continue?',
