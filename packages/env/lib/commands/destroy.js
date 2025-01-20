@@ -22,11 +22,12 @@ const { executeLifecycleScript } = require( '../execute-lifecycle-script' );
  * Destroy the development server.
  *
  * @param {Object}  options
- * @param {Object}  options.spinner A CLI spinner which indicates progress.
- * @param {boolean} options.scripts Indicates whether or not lifecycle scripts should be executed.
- * @param {boolean} options.debug   True if debug mode is enabled.
+ * @param {Object}  options.spinner           A CLI spinner which indicates progress.
+ * @param {boolean} options.scripts           Indicates whether or not lifecycle scripts should be executed.
+ * @param {boolean} options.debug             True if debug mode is enabled.
+ * @param {boolean} options.skip-confirmation Indicates whether or not to skip the confirmation prompt.
  */
-module.exports = async function destroy( { spinner, scripts, debug } ) {
+module.exports = async function destroy( { spinner, scripts, debug, 'skip-confirmation': skipConfirmation } ) {
 	const config = await loadConfig( path.resolve( '.' ) );
 
 	try {
@@ -40,18 +41,20 @@ module.exports = async function destroy( { spinner, scripts, debug } ) {
 		'WARNING! This will remove Docker containers, volumes, networks, and images associated with the WordPress instance.'
 	);
 
-	let yesDelete = false;
-	try {
-		yesDelete = await confirm( {
-			message: 'Are you sure you want to continue?',
-			default: false,
-		} );
-	} catch ( error ) {
-		if ( error.name === 'ExitPromptError' ) {
-			console.log( 'Cancelled.' );
-			process.exit( 1 );
+	let yesDelete = skipConfirmation;
+	if (!yesDelete) {
+		try {
+			yesDelete = await confirm( {
+				message: 'Are you sure you want to continue?',
+				default: false,
+			} );
+		} catch ( error ) {
+			if ( error.name === 'ExitPromptError' ) {
+				console.log( 'Cancelled.' );
+				process.exit( 1 );
+			}
+			throw error;
 		}
-		throw error;
 	}
 
 	spinner.start();

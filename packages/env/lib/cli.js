@@ -244,6 +244,11 @@ module.exports = function cli() {
 				describe: 'Execute any configured lifecycle scripts.',
 				default: true,
 			} );
+			args.option( 'skip-confirmation', {
+				type: 'boolean',
+				describe: 'Skip confirmation prompt',
+				default: false,
+			} );
 		},
 		withSpinner( env.destroy )
 	);
